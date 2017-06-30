@@ -15,7 +15,7 @@ class Todo extends React.Component {
         {this.props.completed ?
           <strike>{this.props.todo}</strike>:
           this.props.todo}
-      </li> 
+      </li>
 
 
     )
@@ -28,7 +28,7 @@ class TodoList extends React.Component {
       <div>
         <h2>First Todo List</h2>
         <ul>
-          {dummyData.map((todo, key) => <Todo todo={todo.task} key={key} completed={todo.completed}/>)}
+          {this.props.dummyData.map((todo, key) => <Todo todo={todo.task} key={key} completed={todo.completed}/>)}
 
         </ul>
       </div>
@@ -48,12 +48,26 @@ class InputLine extends React.Component{
 }
 
 class TodoApp extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      todos:[]
+    }
+  }
+
+  componentDidMount() {
+    this.setState(
+      this.setState({
+        todos: dummyData
+      })
+    )
+  }
   render() {
     return(
       <div>
         <h1>Your to do list today:</h1>
         <InputLine />
-        <TodoList />
+        <TodoList dummyData={this.state.todos}/>
       </div>
     )
   }
