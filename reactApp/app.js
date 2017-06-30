@@ -1,15 +1,23 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-const dummyData = ['pooping', 'shitting', 'poopers']
+const dummyData = [
+  {task: 'pooping', completed: false},
+  {task: 'poop', completed: false},
+  {task: 'shitting', completed: true}
+]
 
 class Todo extends React.Component {
   render() {
     return (
       <li>
         <button>X</button>
-        {this.props.todo}
-      </li>
+        {this.props.completed ?
+          <strike>{this.props.todo}</strike>:
+          this.props.todo}
+      </li> 
+
+
     )
   }
 }
@@ -20,7 +28,7 @@ class TodoList extends React.Component {
       <div>
         <h2>First Todo List</h2>
         <ul>
-          {dummyData.map((todo, key) => <Todo todo={todo} key={key} />)}
+          {dummyData.map((todo, key) => <Todo todo={todo.task} key={key} completed={todo.completed}/>)}
 
         </ul>
       </div>
@@ -32,8 +40,8 @@ class InputLine extends React.Component{
   render() {
     return (
       <form>
-        <input type="text" />
-        <input type="submit" />
+        <input type="text" placeholder="task" />
+        <input type="submit" value="Add todo" />
       </form>
     )
   }
