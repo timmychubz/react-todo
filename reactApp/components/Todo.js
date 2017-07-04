@@ -5,9 +5,11 @@ class Todo extends React.Component {
     return (
       <li>
         <button onClick={this.props.xClick}>X</button>
-        {this.props.completed ?
-          <strike>{this.props.todo}</strike>:
-          this.props.todo}
+        <span onClick={this.props.completeTodo}>
+          {this.props.completed ?
+            <strike>{this.props.todo}</strike>:
+            this.props.todo}
+        </span>
       </li>
     )
   }

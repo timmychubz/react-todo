@@ -34,6 +34,16 @@ class TodoApp extends React.Component {
     })
   }
 
+  completeTodo(index) {
+    dummyData.splice(index, 1, {
+      task: dummyData[index].task,
+      completed: !(dummyData[index].completed)
+    })
+    this.setState({
+      todos: dummyData
+    })
+  }
+
   componentDidMount() {
     this.setState(
       this.setState({
@@ -52,6 +62,7 @@ class TodoApp extends React.Component {
         <TodoList
           dummyData={this.state.todos}
           todoXClick={(index) => this.removeTodo(index)}
+          completeTodo={(index) => this.completeTodo(index)}
         />
       </div>
     )

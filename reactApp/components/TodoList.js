@@ -13,6 +13,7 @@ class TodoList extends React.Component {
               key={"todo"+index}
               completed={todo.completed}
               xClick={() => this.props.todoXClick(index)}
+              completeTodo={() => this.props.completeTodo(index)}
             />)}
         </ul>
       </div>
