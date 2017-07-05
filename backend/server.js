@@ -1,6 +1,9 @@
 const express = require('express');
 const app = express();
 const dbRoutes = require('./routes/databaseAccess');
+const mongoose = require('mongoose');
+
+mongoose.connect(process.env.MONGODB_URI);
 
 app.use(express.static('build'));
 app.use('/db', dbRoutes);
