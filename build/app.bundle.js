@@ -10473,8 +10473,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 var dbUrl = "http://localhost:3000/db";
 
-var dummyData = [{ task: 'pooping', completed: false }, { task: 'poop', completed: false }, { task: 'shitting', completed: true }];
-
 var TodoApp = function (_React$Component) {
   _inherits(TodoApp, _React$Component);
 
@@ -10494,15 +10492,6 @@ var TodoApp = function (_React$Component) {
     value: function addTodo(todo) {
       var _this2 = this;
 
-      // console.log(todo, 'has been added and dummyData looks like', dummyData)
-      // dummyData.push({
-      //   task: todo,
-      //   completed: false
-      // })
-      // this.setState({
-      //   todos: dummyData
-      // })
-
       _axios2.default.post(dbUrl + '/add', {
         task: todo,
         completed: false
@@ -10514,34 +10503,54 @@ var TodoApp = function (_React$Component) {
     }
   }, {
     key: 'removeTodo',
-    value: function removeTodo(index) {
-      dummyData.splice(index, 1);
-      this.setState({
-        todos: dummyData
+    value: function removeTodo(id) {
+      var _this3 = this;
+
+      _axios2.default.post(dbUrl + '/remove', {
+        id: id
+      }).then(function (response) {
+        var ind;
+        _this3.state.todos.forEach(function (todo, index) {
+          ind = todo._id == id ? index : ind;
+        });
+        _this3.setState({
+          todos: _this3.state.todos.slice(0, ind).concat(_this3.state.todos.slice(ind + 1))
+        });
       });
     }
   }, {
     key: 'completeTodo',
-    value: function completeTodo(index) {
-      dummyData.splice(index, 1, {
-        task: dummyData[index].task,
-        completed: !dummyData[index].completed
-      });
-      this.setState({
-        todos: dummyData
+    value: function completeTodo(id) {
+      var _this4 = this;
+
+      _axios2.default.post(dbUrl + '/toggle', {
+        id: id
+      }).then(function (response) {
+        var ind;
+        _this4.state.todos.forEach(function (todo, index) {
+          ind = todo._id == id ? index : ind;
+        });
+        console.log(response);
+        _this4.setState({
+          todos: _this4.state.todos.slice(0, ind).concat([response.data], _this4.state.todos.slice(ind + 1))
+        });
       });
     }
   }, {
     key: 'componentDidMount',
     value: function componentDidMount() {
-      this.setState(this.setState({
-        todos: dummyData
-      }));
+      var _this5 = this;
+
+      _axios2.default.get(dbUrl + '/all').then(function (response) {
+        _this5.setState({
+          todos: response.data
+        });
+      });
     }
   }, {
     key: 'render',
     value: function render() {
-      var _this3 = this;
+      var _this6 = this;
 
       return _react2.default.createElement(
         'div',
@@ -10552,15 +10561,15 @@ var TodoApp = function (_React$Component) {
           'Your to do list today:'
         ),
         _react2.default.createElement(_InputLine2.default, { submit: function submit(text) {
-            return _this3.addTodo(text);
+            return _this6.addTodo(text);
           } }),
         _react2.default.createElement(_TodoList2.default, {
-          dummyData: this.state.todos,
-          todoXClick: function todoXClick(index) {
-            return _this3.removeTodo(index);
+          todos: this.state.todos,
+          todoXClick: function todoXClick(id) {
+            return _this6.removeTodo(id);
           },
-          completeTodo: function completeTodo(index) {
-            return _this3.completeTodo(index);
+          completeTodo: function completeTodo(id) {
+            return _this6.completeTodo(id);
           }
         })
       );
@@ -11655,18 +11664,17 @@ var TodoList = function (_React$Component) {
         _react2.default.createElement(
           'ul',
           null,
-          this.props.dummyData.map(function (todo, index) {
+          this.props.todos.map(function (todo, index) {
             return _react2.default.createElement(_Todo2.default, {
               todo: todo.task,
-              key: "todo" + index,
+              key: todo._id,
               completed: todo.completed,
               xClick: function xClick() {
-                return _this2.props.todoXClick(index);
+                return _this2.props.todoXClick(todo._id);
               },
               completeTodo: function completeTodo() {
-                return _this2.props.completeTodo(index);
-              }
-            });
+                return _this2.props.completeTodo(todo._id);
+              } });
           })
         )
       );

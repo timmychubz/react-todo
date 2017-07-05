@@ -6,12 +6,6 @@ import TodoList from './TodoList';
 const dbUrl = "http://localhost:3000/db";
 
 
-const dummyData = [
-  {task: 'pooping', completed: false},
-  {task: 'poop', completed: false},
-  {task: 'shitting', completed: true}
-]
-
 class TodoApp extends React.Component {
   constructor(props) {
     super(props)
@@ -21,14 +15,6 @@ class TodoApp extends React.Component {
   }
 
   addTodo(todo) {
-    // console.log(todo, 'has been added and dummyData looks like', dummyData)
-    // dummyData.push({
-    //   task: todo,
-    //   completed: false
-    // })
-    // this.setState({
-    //   todos: dummyData
-    // })
 
     axios.post(dbUrl + '/add', {
         task: todo,
@@ -42,29 +28,50 @@ class TodoApp extends React.Component {
       })
   }
 
-  removeTodo(index) {
-    dummyData.splice(index, 1)
-    this.setState({
-      todos: dummyData
-    })
+  removeTodo(id) {
+    axios.post(dbUrl + '/remove', {
+        id: id
+      })
+      .then((response) => {
+        var ind;
+        this.state.todos.forEach((todo, index) => {
+          ind = todo._id == id ?
+            index:
+            ind
+        })
+        this.setState({
+          todos: this.state.todos.slice(0, ind).concat(this.state.todos.slice(ind + 1))
+        })
+      })
   }
 
-  completeTodo(index) {
-    dummyData.splice(index, 1, {
-      task: dummyData[index].task,
-      completed: !(dummyData[index].completed)
-    })
-    this.setState({
-      todos: dummyData
-    })
+  completeTodo(id) {
+
+    axios.post(dbUrl + '/toggle', {
+        id: id
+      })
+      .then((response) => {
+        var ind;
+        this.state.todos.forEach((todo, index) => {
+          ind = todo._id == id ?
+            index:
+            ind
+        })
+        console.log(response)
+        this.setState({
+          todos: this.state.todos.slice(0, ind).concat([response.data], this.state.todos.slice(ind + 1))
+        })
+      })
   }
 
   componentDidMount() {
-    this.setState(
-      this.setState({
-        todos: dummyData
+
+    axios.get(dbUrl + '/all')
+      .then((response) => {
+        this.setState({
+          todos: response.data
+        })
       })
-    )
   }
 
 
@@ -75,9 +82,9 @@ class TodoApp extends React.Component {
         <h1>Your to do list today:</h1>
         <InputLine submit={(text) => this.addTodo(text)}/>
         <TodoList
-          dummyData={this.state.todos}
-          todoXClick={(index) => this.removeTodo(index)}
-          completeTodo={(index) => this.completeTodo(index)}
+          todos={this.state.todos}
+          todoXClick={(id) => this.removeTodo(id)}
+          completeTodo={(id) => this.completeTodo(id)}
         />
       </div>
     )

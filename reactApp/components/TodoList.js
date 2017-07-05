@@ -7,14 +7,14 @@ class TodoList extends React.Component {
       <div>
         <h2>First Todo List</h2>
         <ul>
-          {this.props.dummyData.map((todo, index) =>
+          {this.props.todos.map((todo, index) =>
             <Todo
               todo={todo.task}
-              key={"todo"+index}
+              key={todo._id}
               completed={todo.completed}
-              xClick={() => this.props.todoXClick(index)}
-              completeTodo={() => this.props.completeTodo(index)}
-            />)}
+              xClick={() => this.props.todoXClick(todo._id)}
+              completeTodo={() => this.props.completeTodo(todo._id)} />
+          )}
         </ul>
       </div>
     )
